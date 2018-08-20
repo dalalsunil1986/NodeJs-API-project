@@ -4,13 +4,38 @@
 
 // Dependencies
 const http = require('http');
+const https = require('https');
 const url = require('url');
 const stringDecoder = require('string_decoder').StringDecoder;
+const config = require('./config');
+const fs = require('fs');
 
+// Create http server
+const httpServer = http.createServer((req,res) => {
+    unifiedServer(req,res);
+});
 
-// Server responds to all string request
-const server = http.createServer((req,res) => {
+// Start http server
+httpServer.listen(config.httpPort, () => {
+    console.log('Server is now listening to the port '+config.httpPort+ ' in ' +config.name.toLowerCase()+ ' mode.');
+});
 
+// Create https server
+const security = {
+    'key' : fs.readFileSync('./certs/key.pem'),
+    'cert' : fs.readFileSync('./certs/cert.pem')
+};
+const httpsServer = https.createServer(security, (res,req) => {
+    unifiedServer(req,res);
+});
+
+// Start https server
+httpsServer.listen(config.httpsPort, () =>{
+    console.log('Server is now listening to the port '+config.httpsPort+ ' in ' +config.name.toLowerCase()+ ' mode.');
+});
+
+// Server logic for both http and https types
+const unifiedServer = function(req,res){
     // Get and parse URL
     const parsedUrl = url.parse(req.url,true);
 
@@ -49,10 +74,10 @@ const server = http.createServer((req,res) => {
         };
 
         // route the request to the hander
-         chosenHandler(data, async(status,payload) => {
-           status = await typeof(status) === 'number' ? status : 200;
-           payload = await typeof(payload) === 'object' ? payload : {};
-           let payloadString = await JSON.stringify(payload);
+        chosenHandler(data, async(status,payload) => {
+            status = await typeof(status) === 'number' ? status : 200;
+            payload = await typeof(payload) === 'object' ? payload : {};
+            let payloadString = await JSON.stringify(payload);
 
             // send the respond
             await res.writeHead(status);
@@ -62,12 +87,7 @@ const server = http.createServer((req,res) => {
             console.log('Returning this response: ', status, payloadString);
         });
     });
-});
-
-// Server starts and listens on the port 3000
-server.listen(3000, () => {
-    console.log('Server is now listening to the port 3000');
-});
+};
 
 // Define the handlers
 let handlers = {};
