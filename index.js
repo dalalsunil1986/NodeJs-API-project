@@ -11,7 +11,7 @@ const config = require('./config');
 const fs = require('fs');
 
 // Create http server
-const httpServer = http.createServer((req,res) => {
+const httpServer = http.createServer( (req,res) => {
     unifiedServer(req,res);
 });
 
@@ -35,7 +35,7 @@ httpsServer.listen(config.httpsPort, () =>{
 });
 
 // Server logic for both http and https types
-const unifiedServer = function(req,res){
+const unifiedServer = (req,res) => {
     // Get and parse URL
     const parsedUrl = url.parse(req.url,true);
 
@@ -62,7 +62,7 @@ const unifiedServer = function(req,res){
         buffer += await decoder.end();
 
         // Chose a handler the request should go to
-        const chosenHandler = await typeof(router[trimmedPath]) !== 'undefined' ? router[trimmedPath] : handlers.notFound;
+        const chosenHandler = typeof(router[trimmedPath]) !== 'undefined' ? router[trimmedPath] : handlers.notFound;
 
         // construct the data object
         const data = await {
@@ -73,15 +73,17 @@ const unifiedServer = function(req,res){
             'payload' : buffer
         };
 
-        // route the request to the hander
+        // route the request to the handler
         chosenHandler(data, async(status,payload) => {
             status = await typeof(status) === 'number' ? status : 200;
             payload = await typeof(payload) === 'object' ? payload : {};
             let payloadString = await JSON.stringify(payload);
 
             // send the respond
-            await res.writeHead(status);
-            await res.end(payloadString);
+            res.setHeader('Content-Type','application/json');
+            res.writeHead(status);
+            res.end(payloadString);
+
 
             // Log the response
             console.log('Returning this response: ', status, payloadString);
@@ -90,9 +92,12 @@ const unifiedServer = function(req,res){
 };
 
 // Define the handlers
-let handlers = {};
+const handlers = {};
 handlers.sample = (data, callback) => {
     callback(406,{'name' : 'Sample handler'});
+};
+handlers.ping = (data, callback) => {
+    callback(200,{'status' : 'up'});
 };
 handlers.notFound = (data, callback) => {
     callback(404);
@@ -100,5 +105,6 @@ handlers.notFound = (data, callback) => {
 
 // Define a request router
 const router = {
-    'sample' : handlers.sample
+    'sample' : handlers.sample,
+    'ping' : handlers.ping
 };
