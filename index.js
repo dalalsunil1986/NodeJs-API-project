@@ -9,6 +9,8 @@ const url = require('url');
 const stringDecoder = require('string_decoder').StringDecoder;
 const config = require('./config');
 const fs = require('fs');
+const handlers  = require('./lib/handlers');
+const helpers = require('./lib/helpers');
 
 // Create http server
 const httpServer = http.createServer( (req,res) => {
@@ -17,7 +19,7 @@ const httpServer = http.createServer( (req,res) => {
 
 // Start http server
 httpServer.listen(config.httpPort, () => {
-    console.log('Server is now listening to the port '+config.httpPort+ ' in ' +config.name.toLowerCase()+ ' mode.');
+    console.log(`Server is now listening to the port ${config.httpPort} in ${config.name.toLowerCase()} mode.`);
 });
 
 // Create https server
@@ -31,7 +33,7 @@ const httpsServer = https.createServer(security, (res,req) => {
 
 // Start https server
 httpsServer.listen(config.httpsPort, () =>{
-    console.log('Server is now listening to the port '+config.httpsPort+ ' in ' +config.name.toLowerCase()+ ' mode.');
+    console.log(`Server is now listening to the port ${config.httpsPort} in ${config.name.toLowerCase()} mode.`);
 });
 
 // Server logic for both http and https types
@@ -70,7 +72,7 @@ const unifiedServer = (req,res) => {
             'queryString' : parsedQueryObj,
             'method' : method,
             'headers' : header,
-            'payload' : buffer
+            'payload' : helpers.parseToObject(buffer)
         };
 
         // route the request to the handler
@@ -86,25 +88,13 @@ const unifiedServer = (req,res) => {
 
 
             // Log the response
-            console.log('Returning this response: ', status, payloadString);
+            console.log(`Returning this response: ${status}, ${payloadString}`);
         });
     });
 };
 
-// Define the handlers
-const handlers = {};
-handlers.sample = (data, callback) => {
-    callback(406,{'name' : 'Sample handler'});
-};
-handlers.ping = (data, callback) => {
-    callback(200,{'status' : 'up'});
-};
-handlers.notFound = (data, callback) => {
-    callback(404);
-};
-
 // Define a request router
 const router = {
-    'sample' : handlers.sample,
-    'ping' : handlers.ping
+    'ping' : handlers.ping,
+    'users' : handlers.users
 };

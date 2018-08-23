@@ -10,14 +10,16 @@ const environments =  {};
 environments.stage = {
     'httpPort' : 3000,
     'httpsPort' : 3001,
-    'name' : 'STAGE'
+    'name' : 'STAGE',
+    'hashSecret' : 'stageSecret'
 };
 
 // Production
 environments.prod = {
     'httpPort' : 5000,
     'httpsPort' : 5001,
-    'name' : 'PROD'
+    'name' : 'PROD',
+    'hashSecret' : 'prodSecret'
 };
 
 // Determine which Environment is being chosen
