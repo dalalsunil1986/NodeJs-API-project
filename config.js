@@ -11,7 +11,8 @@ environments.stage = {
     'httpPort' : 3000,
     'httpsPort' : 3001,
     'name' : 'STAGE',
-    'hashSecret' : 'stageSecret'
+    'hashSecret' : 'stageSecret',
+    'maxChecks' : 5
 };
 
 // Production
@@ -19,7 +20,8 @@ environments.prod = {
     'httpPort' : 5000,
     'httpsPort' : 5001,
     'name' : 'PROD',
-    'hashSecret' : 'prodSecret'
+    'hashSecret' : 'prodSecret',
+    'maxChecks' : 5
 };
 
 // Determine which Environment is being chosen

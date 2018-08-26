@@ -32,7 +32,7 @@ const httpsServer = https.createServer(security, (res,req) => {
 });
 
 // Start https server
-httpsServer.listen(config.httpsPort, () =>{
+httpsServer.listen(config.httpsPort, () => {
     console.log(`Server is now listening to the port ${config.httpsPort} in ${config.name.toLowerCase()} mode.`);
 });
 
@@ -97,5 +97,6 @@ const unifiedServer = (req,res) => {
 const router = {
     'ping' : handlers.ping,
     'users' : handlers.users,
-    'token' : handlers.token
+    'token' : handlers.token,
+    'check' : handlers.check
 };
