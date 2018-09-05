@@ -12,7 +12,12 @@ environments.stage = {
     'httpsPort' : 3001,
     'name' : 'STAGE',
     'hashSecret' : 'stageSecret',
-    'maxChecks' : 5
+    'maxChecks' : 5,
+    'twilio' : {
+        'SID' : 'ACb32d411ad7fe886aac54c665d25e5c5d',
+        'authToken' : '9455e3eb3109edc12e3d8c92768f7a67',
+        'fromPhone' : '+15005550006'
+    }
 };
 
 // Production
@@ -21,7 +26,12 @@ environments.prod = {
     'httpsPort' : 5001,
     'name' : 'PROD',
     'hashSecret' : 'prodSecret',
-    'maxChecks' : 5
+    'maxChecks' : 5,
+    'twilio' : {
+        'SID' : 'ACb32d411ad7fe886aac54c665d25e5c5d',
+        'authToken' : '9455e3eb3109edc12e3d8c92768f7a67',
+        'fromPhone' : '+15005550006'
+    }
 };
 
 // Determine which Environment is being chosen
